@@ -1,0 +1,12 @@
+{
+  "testExecutionKey" : "POEI22-701",
+  "info" : {
+    "summary" : "Execution of automated tests Abir",
+    "description" : "This execution is automatically"
+  },
+  "tests" : [ {
+    "testKey" : "POEI22-677",
+    "comment" : "Successful execution",
+    "status" : "PASSED"
+  } ]
+}

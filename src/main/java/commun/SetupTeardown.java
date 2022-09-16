@@ -1,16 +1,27 @@
-package commun;
+package main.java.commun;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import main.java.commun.ImportResultToxray;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.io.FileHandler;
+import org.testng.ITest;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 
 public class SetupTeardown {
@@ -53,7 +64,34 @@ String browser="chrome";
     }
 
     @AfterMethod
-    public void teardown() {
+    public void teardown(ITestResult result) throws IOException, NoSuchAlgorithmException, KeyStoreException, InterruptedException, KeyManagementException {
+
+        ImportResultToxray res = new ImportResultToxray();
+
+        if(result.getStatus() == ITestResult.SUCCESS)
+        {
+            System.out.println("passed **");
+            res.generateJsonResults("PASSED");
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            File source = ts.getScreenshotAs (OutputType.FILE);
+            FileHandler.copy(source, new File(System.getProperty("user.dir")+"\\screenshots\\"+result.getName()+".png"));
+
+
+        }
+        else if(result.getStatus() == ITestResult.FAILURE)
+        {
+            System.out.println("FAILED******");
+            res.generateJsonResults("FAILED");
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            File source = ts.getScreenshotAs (OutputType.FILE);
+            FileHandler.copy(source, new File(System.getProperty("user.dir")+"\\screenshots\\"+result.getName()+".png"));
+        }
+        else if(result.getStatus() == ITestResult.SKIP ){
+
+            System.out.println("Skiped***");
+            res.generateJsonResults("SKIPED");
+        }
+    res.RemonteResultats();
         driver.quit();
 
     }
